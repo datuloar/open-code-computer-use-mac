@@ -1,0 +1,15 @@
+{
+  "name": "opencode-computer-use-mac",
+  "version": "1.0.0",
+  "description": "Native macOS desktop tools for OpenCode with Accessibility, screenshots, OCR and visible input control.",
+  "type": "module",
+  "private": true,
+  "main": "opencode/plugin.js",
+  "exports": { ".": "./opencode/plugin.js", "./mcp": "./opencode/mcp.js" },
+  "bin": { "opencode-cu-mac": "src/cli.js" },
+  "engines": { "node": ">=18" },
+  "os": ["darwin"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/datuloar/open-code-computer-use-mac.git" },
+  "scripts": { "test": "node test/run.mjs", "verify": "node scripts/verify.mjs", "build": "node scripts/build.mjs" }
+}

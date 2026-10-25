@@ -35,6 +35,11 @@ func rectData(_ rect: CGRect) -> [String: Any] {
     ["x": Double(rect.minX), "y": Double(rect.minY), "width": Double(rect.width), "height": Double(rect.height)]
 }
 
+func pointer() throws -> CGPoint {
+    guard let event = CGEvent(source: nil), primaryBounds().contains(event.location) else { throw Failure("Pointer is outside the supported primary display; provide observed x/y coordinates") }
+    return event.location
+}
+
 func pause(_ seconds: Double) async throws { try await Task.sleep(nanoseconds: UInt64(max(0, seconds) * 1_000_000_000)) }
 
 func writePrivate(_ data: Data, to url: URL) throws {

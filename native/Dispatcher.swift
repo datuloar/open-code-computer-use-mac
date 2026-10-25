@@ -20,6 +20,7 @@ enum Dispatcher {
             let notches = try number(args, "notches")
             guard notches != 0, abs(notches) <= 100, notches.rounded() == notches else { throw Failure("Scroll notches must be a nonzero integer from -100 to 100") }
             if args["x"] != nil || args["y"] != nil { _ = try point(args) }
+            else { _ = try pointer() }
         }
         if input.contains(command) {
             if command == "tap" { _ = try selected(args) }
@@ -93,10 +94,12 @@ enum Dispatcher {
         case "type":
             result = ["typedCharacters": try await Input.type(text(args, "text"))]
         case "scroll":
-            if args["x"] != nil { Input.mouse(.mouseMoved, try point(args)) }
+            let location = args["x"] != nil ? try point(args) : try pointer()
+            if args["x"] != nil { Input.mouse(.mouseMoved, location) }
             let notches = Int32(try number(args, "notches"))
             let horizontal = args["horizontal"] as? Bool == true
             guard let event = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 2, wheel1: horizontal ? 0 : notches, wheel2: horizontal ? notches : 0, wheel3: 0) else { throw Failure("Cannot create scroll event") }
+            event.location = location
             event.post(tap: .cghidEventTap)
             result = ["scrolled": true]
         case "indicator":

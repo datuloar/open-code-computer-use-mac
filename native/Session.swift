@@ -101,7 +101,7 @@ final class ControlSession: NSObject {
         try requireAccessibility()
         guard seconds >= 0 && seconds <= 30, !requestedOwner.isEmpty, requestedOwner.count <= 200 else { throw Failure("Invalid session settings") }
         try prepareDirectory()
-        guard !FileManager.default.fileExists(atPath: humanStopURL.path) else { throw Failure("The human stopped control. Ask for permission, then the human can run opencode-cu-mac resume. MCP cannot clear this stop") }
+        guard !FileManager.default.fileExists(atPath: humanStopURL.path) else { throw Failure("The human stopped control. Ask for permission, then the human can run node src/cli.js resume from the installation folder. MCP cannot clear this stop") }
         if !owner.isEmpty {
             guard owner == requestedOwner else { throw Failure("Another client owns desktop control") }
             try checkpoint()

@@ -4,7 +4,7 @@ import { root } from '../src/backend.js';
 import { join } from 'node:path';
 import { readFrontmatter, readField } from '../src/frontmatter.js';
 
-const required = ['native/main.swift', 'native/Session.swift', 'native/Info.plist', 'src/cli.js', 'opencode/plugin.js', 'opencode/mcp.js', 'opencode/SKILL.md', 'opencode/INSTRUCTIONS.md', 'README.md', 'LICENSE'];
+const required = ['native/main.swift', 'native/Session.swift', 'native/Info.plist', 'src/cli.js', 'opencode/plugin.js', 'opencode/mcp.js', 'opencode/SKILL.md', 'opencode/INSTRUCTIONS.md', 'README.md', 'LICENSE', 'install.sh', 'scripts/package.mjs', 'test/desktop.mjs', 'docs/PUBLISHING.md'];
 for (const file of required) if (!existsSync(join(root, file))) throw new Error(`Missing ${file}`);
 const manifest = JSON.parse(readFileSync(join(root, 'package.json')));
 if (manifest.name !== 'opencode-computer-use-mac' || manifest.os[0] !== 'darwin' || manifest.main !== 'opencode/plugin.js') throw new Error('Incorrect macOS manifest');

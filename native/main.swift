@@ -6,14 +6,7 @@ func output(_ value: String) { FileHandle.standardOutput.write(Data((value + "\n
 
 if CommandLine.arguments.contains("--check") {
     do {
-        let cmd = try Input.keys("cmd+shift+a")
-        guard cmd.0.count == 2, cmd.1 == 0, cmd.2.contains(.maskCommand), cmd.2.contains(.maskShift) else { throw Failure("Key mapping failed") }
-        var rejected = false
-        do { _ = try Input.keys("cmd+unknown") } catch { rejected = true }
-        guard rejected else { throw Failure("Invalid keys must fail") }
-        let rect = CGRect(x: 10, y: 20, width: 30, height: 40)
-        guard rectData(rect)["x"] as? Double == 10 else { throw Failure("Geometry conversion failed") }
-        output(try encoded(["passed": true, "checks": ["modifier mapping", "invalid keys", "geometry", "native framework linkage"]]))
+        output(try encoded(["passed": true, "checks": try Checks.run()]))
         exit(0)
     } catch { output(error.localizedDescription); exit(1) }
 }

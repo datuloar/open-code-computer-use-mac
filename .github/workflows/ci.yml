@@ -20,6 +20,9 @@ jobs:
       - run: node test/run.mjs
       - run: node scripts/build.mjs
       - run: node test/native-smoke.mjs
+      - run: npm install --global opencode-ai@1.18.25 --no-audit --no-fund
+      - run: node test/opencode-smoke.mjs
+      - run: node scripts/package.mjs --native
       - uses: actions/upload-artifact@v4
         with:
           name: native-${{ matrix.os }}

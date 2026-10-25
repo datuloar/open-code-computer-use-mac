@@ -3,6 +3,12 @@
 Use macOS 14 or later, Node.js 18 or later, and OpenCode. Source builds also need Apple's Xcode
 Command Line Tools. The package has no npm runtime dependencies.
 
+For a release archive, choose `arm64` for Apple Silicon or `x64` for Intel. Check the matching
+`.sha256` file with `shasum -a 256 -c <filename>.zip.sha256`, then extract into a permanent folder
+and run `sh install.sh`. The installer verifies the file manifest and uses the bundled helper.
+Do not mix files from different architectures or versions. Downloaded bundles are ad-hoc signed;
+see the privacy and signing notes below before granting access.
+
 Clone the repository into a permanent directory and run:
 
 ```sh
@@ -60,3 +66,15 @@ Run the GUI test only after granting permissions, on an unlocked Mac you can lea
 Stop is a manual emergency stop; it does not type into an application. Resume only clears a
 human-stop marker after you decided to continue. Neither action approves macOS privacy prompts.
 Never paste API keys into this repository or a public issue.
+
+## Update or remove
+
+Stop desktop control and close OpenCode before replacing files. Keep the installation path stable.
+For a source checkout, pull the next reviewed version, rebuild, then rerun the installer. For an
+archive, verify a fresh extraction and replace the old package at the same path. The installer
+rechecks hashes, so do not add local reports or modified source to a release extraction before
+installation. Development checkouts do not use a release manifest.
+
+Run `node src/install-opencode.js --uninstall` from the installed folder before deleting it.
+This removes only this integration's configuration and unmodified skill. If you want to change
+the installation directory, uninstall first, move it, then install from its new location.

@@ -7,6 +7,29 @@ govern input. The real cursor stays visible.
 This independent integration requires macOS 14 or later and Node.js 18 or later. Apple Silicon
 and Intel builds are checked separately. It is not an official OpenCode product.
 
+## Install a release
+
+Download the ZIP and matching checksum from [Releases](https://github.com/datuloar/open-code-computer-use-mac/releases).
+Choose `arm64` for Apple Silicon or `x64` for Intel. Verify the ZIP before extraction:
+
+```sh
+shasum -a 256 -c opencode-computer-use-mac-1.0.0-arm64.zip.sha256
+```
+
+Use the `x64` filename for Intel. Extract the archive into a permanent folder, open Terminal in
+`opencode-computer-use-mac`, then run:
+
+```sh
+sh install.sh
+node src/cli.js permissions
+node src/cli.js doctor
+```
+
+The release contains a compiled helper, so Command Line Tools are only needed for source builds.
+Version 1.0.0 is a preview: both native architectures compile and pass permission-free checks;
+actual desktop input still needs verification on a user Mac. The helper is ad-hoc signed, not
+notarized. Follow [installation](docs/INSTALL.md) if macOS blocks a downloaded bundle.
+
 ## Install from source
 
 ```sh
@@ -14,7 +37,7 @@ git clone https://github.com/datuloar/open-code-computer-use-mac.git
 cd open-code-computer-use-mac
 xcode-select --install
 node scripts/build.mjs
-node src/install-opencode.js
+sh install.sh
 node src/cli.js permissions
 node src/cli.js doctor
 ```
@@ -58,11 +81,14 @@ node scripts/verify.mjs
 node test/run.mjs
 node scripts/build.mjs
 node test/native-smoke.mjs
+node test/opencode-smoke.mjs
 node test/desktop.mjs
 ```
 
 The final command drives only its dedicated fixture on an unlocked Mac. CI compilation and
 permission-free checks do not certify real desktop input. See [AGENTS.md](AGENTS.md) for invariants.
+The OpenCode smoke check requires an installed `opencode` executable and uses temporary config.
+See [publishing](docs/PUBLISHING.md) for packages, checksums and matching release tags.
 
 The Node host and OpenCode lifecycle integration share MIT-licensed work from
 [OpenCode Computer Use for Windows](https://github.com/datuloar/open-code-computer-use-win).

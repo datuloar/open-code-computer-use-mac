@@ -51,7 +51,7 @@ try {
   const payload='  Hello Mac 👋\tUnicode\nsecond line  ';
   await check('Unicode, whitespace, tabs and newlines reach the owned editor',async()=>{
     await tool('tap',{pid:target.pid,text:'Test editor',role:'AXTextArea'});
-    await tool('type',{text:payload});
+    await tool('type',{text:payload.replace('\n','\r\n')});
     await until(()=>{try{return readFileSync(join(folder,'text.txt'),'utf8')===payload;}catch{return false;}});
   });
   await check('inspection reports a complete value and protects secure fields',async()=>{

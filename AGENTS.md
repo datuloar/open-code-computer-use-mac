@@ -16,6 +16,7 @@ entry is `computer`, and the CLI is `opencode-cu-mac`.
 - Release held keys and mouse buttons during cancellation, exceptions, timeout and shutdown.
 - Stop files bind both owner and session token. Never kill another process using a recorded PID.
 - Keep the state directory private, lock it with `flock`, and publish state atomically.
+  Manual resume also acquires this lock, so it cannot clear a stop during another live session.
 - Named input must resolve one visible enabled control. Exact names precede enabled filtering.
   Inspect password subroles before reading values and fail closed when metadata is unavailable.
 - Bound trees, text, coordinates, protocol output and backend timeouts. Do not replay partial input.
@@ -28,4 +29,6 @@ entry is `computer`, and the CLI is `opencode-cu-mac`.
 - Keep raw screenshots, user config, credentials and local GUI reports out of Git.
 
 Run `node scripts/verify.mjs`, `node test/run.mjs`, and on macOS `node scripts/build.mjs` and
-`node test/native-smoke.mjs`. Review `docs/VALIDATION.md` before claiming desktop verification.
+`node test/native-smoke.mjs`. With OpenCode installed, `node test/opencode-smoke.mjs` validates
+real host integration in isolated config. Review `docs/VALIDATION.md` before claiming desktop
+verification. Keep the release tag, package version and app bundle version equal.

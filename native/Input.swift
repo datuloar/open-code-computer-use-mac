@@ -86,7 +86,7 @@ enum Input {
 
     static func type(_ value: String) async throws -> Int {
         var sent = 0
-        for character in value {
+        for character in value.replacingOccurrences(of: "\r\n", with: "\n") {
             try ControlSession.shared.checkpoint()
             if character == "\r" { continue }
             if character == "\n" { try await press("return") }

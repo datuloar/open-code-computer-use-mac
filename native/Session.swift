@@ -9,7 +9,7 @@ final class IndicatorPanel: NSPanel {
 
 final class ControlSession: NSObject {
     static let shared = ControlSession()
-    let directory = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Caches/opencode-cu-mac", isDirectory: true)
+    let directory: URL
     var owner = ""
     var token = ""
     var ready = false
@@ -25,6 +25,11 @@ final class ControlSession: NSObject {
     var stopURL: URL { directory.appendingPathComponent("stop.json") }
     var humanStopURL: URL { directory.appendingPathComponent("human-stop") }
     var stateURL: URL { directory.appendingPathComponent("session.json") }
+
+    init(directory: URL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Caches/opencode-cu-mac", isDirectory: true)) {
+        self.directory = directory
+        super.init()
+    }
 
     func prepareDirectory() throws {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
@@ -163,6 +168,11 @@ final class ControlSession: NSObject {
     func resume() throws {
         try prepareDirectory()
         guard owner.isEmpty else { throw Failure("Stop active control before resuming") }
+        let descriptor = open(directory.appendingPathComponent("control.lock").path, O_CREAT | O_RDWR | O_NOFOLLOW, S_IRUSR | S_IWUSR)
+        guard descriptor >= 0 else { throw Failure("Cannot open desktop ownership lock") }
+        defer { close(descriptor) }
+        guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else { throw Failure("Stop active control before resuming") }
+        defer { flock(descriptor, LOCK_UN) }
         if FileManager.default.fileExists(atPath: humanStopURL.path) { try FileManager.default.removeItem(at: humanStopURL) }
     }
 }

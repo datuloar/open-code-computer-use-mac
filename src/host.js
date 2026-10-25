@@ -163,6 +163,10 @@ export class BackendHost {
     try {
       child.stdin.end();
       child.kill();
+      const deadline = setTimeout(() => {
+        if (child.exitCode == null && child.signalCode == null) child.kill('SIGKILL');
+      }, 2000);
+      deadline.unref();
     } catch {
       return;
     }

@@ -15,6 +15,7 @@ final class DesktopFixture: NSObject, NSTextViewDelegate {
         editor = NSTextView(frame: scroll.bounds)
         editor.isRichText = false
         editor.setAccessibilityLabel("Test editor")
+        editor.setAccessibilitySubrole(.unknown)
         editor.delegate = self
         scroll.documentView = editor
         scroll.hasVerticalScroller = true

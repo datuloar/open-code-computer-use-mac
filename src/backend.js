@@ -7,6 +7,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { BackendHost } from './host.js';
 import { ToolError } from './tool-error.js';
 import { parseAnnounceSeconds } from './settings.js';
+import { TOOLS } from './commands.js';
 
 export const root = dirname(dirname(fileURLToPath(import.meta.url)));
 export const stateDirectory = join(homedir(), 'Library', 'Caches', 'opencode-cu-mac');
@@ -44,7 +45,8 @@ export class DesktopClient {
       if (!existsSync(binary)) throw new ToolError('Native helper is missing. Run node scripts/build.mjs on your Mac, then restart OpenCode.');
       this.host = new BackendHost({ command: binary, args: ['--serve'] });
     }
-    const countdown = name === 'indicator' && args.action === 'stop' ? 5 : parseAnnounceSeconds(process.env.OPENCODE_CU_ANNOUNCE_SECONDS);
+    const needsCountdown = TOOLS.some(tool => tool.name === name && tool.gated) || (name === 'indicator' && args.action === 'start');
+    const countdown = needsCountdown ? parseAnnounceSeconds(process.env.OPENCODE_CU_ANNOUNCE_SECONDS) : 5;
     const output = await this.host.call({ command: name, arguments: args, owner: this.owner, announceSeconds: countdown }, timeoutMs);
     try { return JSON.parse(output); }
     catch { throw new ToolError('Native helper returned an invalid response'); }

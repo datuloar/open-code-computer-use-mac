@@ -10,7 +10,7 @@ enum Accessibility {
         let bounds: CGRect
         let enabled: Bool
         let depth: Int
-        var data: [String: Any] { ["name": name, "id": identifier, "role": role, "bounds": rectData(bounds), "x": bounds.midX, "y": bounds.midY, "enabled": enabled, "depth": depth] }
+        var data: [String: Any] { ["name": name, "id": identifier, "role": role, "bounds": rectData(bounds), "x": Double(bounds.midX), "y": Double(bounds.midY), "enabled": enabled, "depth": depth] }
     }
 
     static func attribute(_ element: AXUIElement, _ name: String) -> CFTypeRef? {

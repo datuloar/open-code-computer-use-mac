@@ -32,7 +32,7 @@ func point(_ args: [String: Any], _ x: String = "x", _ y: String = "y") throws -
 }
 
 func rectData(_ rect: CGRect) -> [String: Any] {
-    ["x": rect.minX, "y": rect.minY, "width": rect.width, "height": rect.height]
+    ["x": Double(rect.minX), "y": Double(rect.minY), "width": Double(rect.width), "height": Double(rect.height)]
 }
 
 func pause(_ seconds: Double) async throws { try await Task.sleep(nanoseconds: UInt64(max(0, seconds) * 1_000_000_000)) }

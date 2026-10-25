@@ -69,6 +69,13 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
       if(args.includes('--native')){
         const archive=join(resolve(result.directory,'..'),`opencode-computer-use-mac-${result.version}-${process.arch}.zip`);
         execFileSync('ditto',['-c','-k','--sequesterRsrc','--keepParent',result.directory,archive],{stdio:'inherit'});
+        const extraction=join(resolve(result.directory,'..'),'archive-check');
+        execFileSync('ditto',['-x','-k',archive,extraction],{stdio:'inherit'});
+        const unpacked=join(extraction,'opencode-computer-use-mac');
+        verifyPackage(unpacked);
+        const app=join(unpacked,'build','OpenCode Computer Use.app');
+        execFileSync('codesign',['--verify','--strict',app],{stdio:'inherit',timeout:10000});
+        execFileSync(join(app,'Contents','MacOS','opencode-cu-native'),['--check'],{stdio:'inherit',timeout:10000});
         const checksum=archive+'.sha256';
         writeFileSync(checksum,`${digest(readFileSync(archive))}  ${archive.split(sep).at(-1)}\n`);
         Object.assign(result,{archive,checksum});

@@ -19,6 +19,8 @@ installer and English agent instructions. They contain no runtime npm dependenci
 configuration. `PACKAGE-MANIFEST.json` records individual file hashes. Check a fresh extraction
 with `node scripts/package.mjs --check .` before installation. Hashes detect accidental changes;
 they are not a substitute for a trusted release or a Developer ID signature.
+Before producing its checksum, the packager also extracts the ZIP, rechecks every file, verifies
+the app's signature and runs the extracted helper's native checks.
 
 Keep `package.json` and `native/Info.plist` versions equal. The release workflow requires the
 exact tag `v` followed by that version, such as `v1.0.0`. A mismatch is a failed release; do not

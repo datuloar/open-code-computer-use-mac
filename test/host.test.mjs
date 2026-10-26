@@ -119,6 +119,53 @@ test('stopping a host settles startup and an in-flight command immediately', asy
   await assert.rejects(pending, /stopped/);
 });
 
+test('stopping before queued work starts prevents native startup', async () => {
+  let spawns = 0;
+  const host = new BackendHost({ command: 'fake', args: [], spawnProcess: () => {
+    spawns++;
+    const process = child();
+    queueMicrotask(() => process.stdout.emit('data', '\u001eOPENCODE-CU-END READY\n'));
+    process.stdin.write = () => queueMicrotask(() => process.stdout.emit('data', 'UNEXPECTED\n\u001eOPENCODE-CU-END 0\n'));
+    return process;
+  } });
+  const queued = host.call(['type', 'must not execute']);
+  host.kill();
+  try {
+    await assert.rejects(queued, /stopped/);
+    assert.equal(spawns, 0);
+  } finally { host.kill(); }
+});
+
+test('cancellation rejects old queued input and permits an explicit new call', async () => {
+  const first = child();
+  const next = child();
+  const children = [first, next];
+  const writes = [];
+  const host = new BackendHost({ command: 'fake', args: [], spawnProcess: () => {
+    const process = children.shift();
+    queueMicrotask(() => process.stdout.emit('data', '\u001eOPENCODE-CU-END READY\n'));
+    return process;
+  } });
+  let sent;
+  const started = new Promise(resolve => { sent = resolve; });
+  first.stdin.write = sent;
+  next.stdin.write = value => {
+    writes.push(JSON.parse(value));
+    queueMicrotask(() => next.stdout.emit('data', 'OK\n\u001eOPENCODE-CU-END 0\n'));
+  };
+  const active = host.call(['drag']);
+  await started;
+  const queued = host.call(['type', 'must not execute']);
+  const results = Promise.allSettled([active, queued]);
+  host.kill();
+  try {
+    const recovered = host.call(['windows']);
+    assert.deepEqual((await results).map(result => result.status), ['rejected', 'rejected']);
+    assert.equal(await recovered, 'OK');
+    assert.deepEqual(writes, [['windows']]);
+  } finally { host.kill(); }
+});
+
 test('startup diagnostics survive an early exit and a startup timeout resets the host', async () => {
   const process = child();
   const host = new BackendHost({ command: 'fake', args: [], spawnProcess: () => process, startTimeoutMs: 10 });

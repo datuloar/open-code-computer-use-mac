@@ -21,6 +21,8 @@ entry is `computer`, and the CLI is `opencode-cu-mac`.
   Inspect password subroles before reading values and fail closed when metadata is unavailable.
 - Bound trees, text, coordinates, protocol output and backend timeouts. Do not replay partial input.
 - The native indicator shares the backend process. Pipe closure and signals must close control.
+- Keep asynchronous dispatch, control startup and input on `MainActor`. AppKit UI, run-loop
+  timers and held-input state must stay on the main thread across suspension points.
 - Do not read the clipboard, approve privacy dialogs, or grant permissions programmatically.
 - Installation preserves unrelated OpenCode configuration and backs up changed files.
 - Source builds and release bundles use a stable app identity. Ad-hoc signing is not notarization.

@@ -19,15 +19,18 @@ export class BackendHost {
     this.startup = null;
     this.stderr = '';
     this.queue = Promise.resolve();
+    this.generation = { error: null };
   }
 
   call(argv, timeoutMs = CALL_TIMEOUT_MS) {
-    const run = this.queue.then(() => this.send(argv, timeoutMs));
+    const generation = this.generation;
+    const run = this.queue.then(() => this.send(argv, timeoutMs, generation));
     this.queue = run.catch(() => undefined);
     return run;
   }
 
-  async send(argv, timeoutMs) {
+  async send(argv, timeoutMs, generation = this.generation) {
+    if (generation.error) throw generation.error;
     const started = performance.now();
     const exceeded = new ToolError(
       `the backend was stopped after ${Math.round(timeoutMs / 1000)}s; the machine is busy or a dialog is waiting`,
@@ -36,6 +39,7 @@ export class BackendHost {
     const startupTimer = setTimeout(timeout, timeoutMs);
     try { await this.start(); }
     finally { clearTimeout(startupTimer); }
+    if (generation.error) throw generation.error;
     const remaining = timeoutMs - (performance.now() - started);
     if (remaining <= 0) { timeout(); throw exceeded; }
     return new Promise((resolve, reject) => {
@@ -141,6 +145,8 @@ export class BackendHost {
   }
 
   reset(error) {
+    this.generation.error = error;
+    this.generation = { error: null };
     this.child = null;
     this.ready = null;
     this.buffer = '';

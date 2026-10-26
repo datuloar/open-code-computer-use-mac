@@ -97,7 +97,7 @@ final class ControlSession: NSObject {
         return value["owner"] == owner && value["token"] == token
     }
 
-    func begin(owner requestedOwner: String, seconds: Int) async throws {
+    @MainActor func begin(owner requestedOwner: String, seconds: Int) async throws {
         try requireAccessibility()
         guard seconds >= 0 && seconds <= 30, !requestedOwner.isEmpty, requestedOwner.count <= 200 else { throw Failure("Invalid session settings") }
         try prepareDirectory()

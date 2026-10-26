@@ -5,7 +5,7 @@ enum Dispatcher {
     static let tools = Set(["doctor", "permissions", "resume", "windows", "ui_tree", "find", "tap", "focus", "screenshot", "read_text", "click", "move", "drag", "scroll", "type", "press", "indicator"])
     static let input = Set(["tap", "focus", "click", "move", "drag", "scroll", "type", "press"])
 
-    static func run(_ request: [String: Any]) async throws -> [String: Any] {
+    @MainActor static func run(_ request: [String: Any]) async throws -> [String: Any] {
         guard let command = request["command"] as? String, tools.contains(command), let args = request["arguments"] as? [String: Any], let owner = request["owner"] as? String, !owner.isEmpty, owner.count <= 200 else { throw Failure("Invalid native request") }
         let session = ControlSession.shared
         let seconds = try number(request, "announceSeconds", fallback: 5)

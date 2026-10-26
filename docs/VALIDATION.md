@@ -25,13 +25,23 @@ executable is not on PATH. Its report stays in a temporary directory.
 
 CI pins OpenCode 1.18.25 for this integration check on both Mac architectures. The same check
 passed with OpenCode 1.18.25 on the Windows development workstation on October 25, 2026; that
-result establishes host integration only. The package also has 34 Node unit tests covering
-validation, cancellation, host recovery, installer preservation, ownership hooks and packaging.
+result establishes host integration only. The Node unit suite covers validation, cancellation of
+active and queued commands, host recovery, installer preservation, ownership hooks and packaging.
 Current native build results are recorded in [GitHub Actions](https://github.com/datuloar/open-code-computer-use-mac/actions).
 
 The desktop test is opt-in and uses only its own fixture. It verifies field typing, inspection,
-named clicks and cleanup, then preserves a JSON report. Physical Escape, Stop-button behavior,
+named clicks, external cancellation and cleanup, then preserves a JSON report. The fixture
+explicitly exposes its editor as enabled and disables automatic text substitutions, including
+double-space-to-period replacement through process-local launch arguments. User keyboard
+preferences are not changed. Physical Escape, Stop-button behavior,
 Retina appearance, third-party app coverage and interaction with other monitors need human review.
+
+On October 26, 2026, all nine desktop checks passed on an Apple Silicon Mac running macOS 26.6.2
+(25G83), using Node.js 24.22.1 and the local fixes on top of commit `c153fcd`. Accessibility,
+Input Monitoring, event posting and Screen Recording were available to the actual helper process.
+This run reproduced and fixed an AppKit main-thread crash during control startup. Asynchronous
+dispatch, session startup and input now stay on `MainActor`, including after suspension.
+The result covers the owned fixture on that Mac, not Intel desktop input or arbitrary applications.
 
 No autonomous provider task, token-cost comparison, Paint-style drawing benchmark or superiority
 claim is inherited from the Windows distribution. Record the tested commit, architecture, macOS

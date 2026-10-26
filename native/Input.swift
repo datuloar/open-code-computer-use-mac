@@ -42,7 +42,7 @@ enum Input {
         }
     }
 
-    static func click(_ location: CGPoint, mode: String) async throws {
+    @MainActor static func click(_ location: CGPoint, mode: String) async throws {
         try ControlSession.shared.checkpoint()
         let button: CGMouseButton = mode == "right" ? .right : mode == "middle" ? .center : .left
         let count = mode == "double" ? 2 : mode == "triple" ? 3 : 1
@@ -58,7 +58,7 @@ enum Input {
         }
     }
 
-    static func drag(_ from: CGPoint, _ to: CGPoint) async throws {
+    @MainActor static func drag(_ from: CGPoint, _ to: CGPoint) async throws {
         try ControlSession.shared.checkpoint()
         defer { releaseAll() }
         mouse(.mouseMoved, from)
@@ -74,7 +74,7 @@ enum Input {
         heldButton = nil
     }
 
-    static func press(_ combo: String) async throws {
+    @MainActor static func press(_ combo: String) async throws {
         let (codes, code, flags) = try keys(combo)
         try ControlSession.shared.checkpoint()
         defer { releaseAll() }
@@ -84,7 +84,7 @@ enum Input {
         key(code, down: false, flags: flags)
     }
 
-    static func type(_ value: String) async throws -> Int {
+    @MainActor static func type(_ value: String) async throws -> Int {
         var sent = 0
         for character in value.replacingOccurrences(of: "\r\n", with: "\n") {
             try ControlSession.shared.checkpoint()

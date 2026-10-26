@@ -42,6 +42,14 @@ Privacy & Security, enable Accessibility, Screen & System Audio Recording (calle
 on older macOS), and Input Monitoring for the helper or the terminal/host macOS lists as responsible.
 The native bundle is `build/OpenCode Computer Use.app`. Keep this path stable.
 
+When Node starts the helper directly, macOS can attribute its privacy checks to the launching
+application, such as Terminal, an editor, or the app hosting an integrated terminal. In that case,
+enabling the helper's entry alone is not enough: the launching application needs the permissions.
+Run `doctor` from the same application that will run OpenCode and check its actual result. If
+the helper's switches are on but `doctor` still reports false, review the launching application's
+entry instead of repeatedly rebuilding the helper. Granting access to that application also
+allows other commands it launches to use the corresponding desktop permissions.
+
 `doctor` reports the permissions visible to the actual native process, its screen bounds and any
 human-stop marker. Accessibility enables named controls and event injection. Screen Recording
 enables captures and OCR. Input Monitoring permits the physical Escape listener. Input fails

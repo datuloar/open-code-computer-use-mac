@@ -26,8 +26,9 @@ node src/cli.js doctor
 ```
 
 The release contains a compiled helper, so Command Line Tools are only needed for source builds.
-Version 1.0.0 is a preview: both native architectures compile and pass permission-free checks;
-actual desktop input still needs verification on a user Mac. The helper is ad-hoc signed, not
+Version 1.0.0 is a preview: both native architectures compile and pass permission-free checks.
+The desktop fixture also passes on one Apple Silicon Mac; see [validation](docs/VALIDATION.md)
+for the tested scope and remaining manual checks. The helper is ad-hoc signed, not
 notarized. Follow [installation](docs/INSTALL.md) if macOS blocks a downloaded bundle.
 
 ## Install from source

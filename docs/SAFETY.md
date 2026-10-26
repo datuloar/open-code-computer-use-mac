@@ -9,6 +9,8 @@ After approving continuation, the human can run `node src/cli.js resume`. Closin
 terminating the helper, OpenCode lifecycle cleanup and the 60-second idle timer close control.
 Input releases run on normal exceptions and cancellation. A forced kill cannot execute cleanup;
 inspect the desktop before continuing after a process or OS crash.
+Stopping or losing the backend also rejects commands already waiting in its queue. Only a new
+call submitted after the stop can start a replacement backend; queued input is never replayed.
 
 Pointer coordinates and capture regions stay on the primary display. Keyboard shortcuts act on
 the foreground application, which the agent must observe and focus first. All coordinates are

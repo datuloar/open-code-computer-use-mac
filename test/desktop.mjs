@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, writeFileSync, existsSync, readdirSync } fro
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
-import { DesktopClient, binary, root, indicatorOwner } from '../src/backend.js';
+import { DesktopClient, binary, root, indicatorOwner, requestIndicatorStop } from '../src/backend.js';
 import { execute } from '../src/mcp.js';
 
 assert.equal(process.platform, 'darwin', 'Run this interactive test on macOS.');
@@ -36,7 +36,7 @@ try {
     assert.equal(doctor.permissions.screenRecording,true,'Grant Screen Recording first');
     assert.equal(doctor.humanStopped,false,'The human stopped control; do not resume automatically');
   });
-  fixture=spawn(binary,['--fixture',folder],{stdio:'ignore'});
+  fixture=spawn(binary,['--fixture',folder,'-NSAutomaticPeriodSubstitutionEnabled','NO'],{stdio:'ignore'});
   fixture.on('error',error=>{report.fixtureError=error.message;save();});
   await until(()=>existsSync(join(folder,'ready.json')));
   const target=JSON.parse(readFileSync(join(folder,'ready.json')));
@@ -78,6 +78,14 @@ try {
     const value=await tool('wait',{pid:target.pid,text:'Test action',seconds:2});
     assert.equal(value.observation.found,true);
     assert.equal((await tool('indicator',{action:'status'})).controlOn,false);
+  });
+  await check('external cancellation reaches the active main-run-loop timer',async()=>{
+    await tool('indicator',{action:'start'});
+    assert.equal(requestIndicatorStop(client.owner),true);
+    await until(()=>indicatorOwner()!==client.owner);
+    const status=await tool('indicator',{action:'status'});
+    assert.equal(status.controlOn,false);
+    assert.equal(status.humanStopped,false);
   });
   report.status='passed';
 } catch(error) {report.status='failed';report.error=error.message;process.exitCode=1;console.error(error.message);}

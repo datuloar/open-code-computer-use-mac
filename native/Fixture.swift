@@ -14,8 +14,13 @@ final class DesktopFixture: NSObject, NSTextViewDelegate {
         let scroll = NSScrollView(frame: CGRect(x: 24, y: 110, width: 632, height: 250))
         editor = NSTextView(frame: scroll.bounds)
         editor.isRichText = false
+        editor.isAutomaticQuoteSubstitutionEnabled = false
+        editor.isAutomaticDashSubstitutionEnabled = false
+        editor.isAutomaticTextReplacementEnabled = false
+        editor.isAutomaticSpellingCorrectionEnabled = false
         editor.setAccessibilityLabel("Test editor")
         editor.setAccessibilitySubrole(.unknown)
+        editor.setAccessibilityEnabled(true)
         editor.delegate = self
         scroll.documentView = editor
         scroll.hasVerticalScroller = true
